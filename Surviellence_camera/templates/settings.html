@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
+</head>
+<body class="{{ theme }}"> <!-- Apply saved theme -->
+
+    <div class="sidebar">
+        <h2>CCTV Control</h2>
+        <ul>
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('settings') }}" class="active">Settings</a></li>
+            <li><a href="javascript:void(0);" id="logout-btn">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h2>System Settings</h2>
+        <p>Configure your CCTV preferences here.</p>
+
+        <form action="{{ url_for('save_settings') }}" method="POST" class="settings-form">
+            <!-- Detection Mode -->
+            <div class="settings-group">
+                <label for="detection_mode">Detection Mode</label>
+                <select id="detection_mode" name="detection_mode">
+                    <option value="live" {% if detection_mode == 'live' %}selected{% endif %}>Live</option>
+                    <option value="stored" {% if detection_mode == 'stored' %}selected{% endif %}>Stored Video</option>
+                </select>
+            </div>
+        
+            <!-- Camera IP Address (enabled only when live mode is selected) -->
+            <div class="settings-group">
+                <label for="camera_ip">Camera IP Address</label>
+                <input type="text" id="camera_ip" name="camera_ip" placeholder="Enter Camera IP" value="{{ camera_ip }}" {% if detection_mode == 'stored' %}disabled{% endif %} required>
+            </div>
+        
+            <!-- Camera Quality -->
+            <div class="settings-group">
+                <label for="camera_quality">Camera Quality</label>
+                <select id="camera_quality" name="camera_quality">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+        
+            <!-- Storage Limit -->
+            <div class="settings-group">
+                <label for="storage_limit">Storage Limit (GB)</label>
+                <input type="number" id="storage_limit" name="storage_limit" min="1" max="1000" step="1" value="100">
+            </div>
+        
+            <!-- Theme Selection -->
+            <div class="settings-group">
+                <label for="theme">Theme</label>
+                <select id="theme" name="theme">
+                    <option value="light" {% if theme == 'light' %} selected {% endif %}>Light</option>
+                    <option value="dark" {% if theme == 'dark' %} selected {% endif %}>Dark</option>
+                </select>
+            </div>
+        
+            <!-- Save Button -->
+            <div class="settings-group">
+                <button type="submit" class="save-btn">Save Settings</button>
+            </div>
+        </form>
+        
+    </div>
+
+    <div id="logout-modal" class="modal">
+        <div class="modal-content">
+            <h3>Are you sure you want to logout?</h3>
+            <button id="confirm-logout">Yes</button>
+            <button id="cancel-logout">No</button>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const detectionModeSelect = document.getElementById("detection_mode");
+            const cameraIpInput = document.getElementById("camera_ip");
+    
+            // Toggle Camera IP field based on detection mode
+            detectionModeSelect.addEventListener("change", function() {
+                if (detectionModeSelect.value === "stored") {
+                    cameraIpInput.disabled = true;
+                } else {
+                    cameraIpInput.disabled = false;
+                }
+            });
+    
+            // Initialize the Camera IP field state on page load
+            if (detectionModeSelect.value === "stored") {
+                cameraIpInput.disabled = true;
+            }
+        });
+    </script>
+    
+</body>
+</html>

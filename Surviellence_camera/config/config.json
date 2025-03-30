@@ -1,0 +1,13 @@
+{
+    "CAMERA_IP": "",
+    "MQTT_BROKER": "test.mosquitto.org",
+    "MQTT_PORT": 1883,
+    "MQTT_TOPIC": "crowd/alert",
+    "ALARM_SOUND": "static/audio/alarm.mp3",
+    "MODEL_PATH": "yolov8n.pt",
+    "detection_mode": "stored",
+    "ip_address": "",
+    "camera_quality": "low",
+    "storage_limit": "100",
+    "theme": "dark"
+}

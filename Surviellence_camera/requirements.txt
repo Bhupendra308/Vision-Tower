@@ -1,0 +1,8 @@
+flask
+requests
+opencv-python
+numpy
+pygame
+playsound
+paho-mqtt
+opencv-contrib-python

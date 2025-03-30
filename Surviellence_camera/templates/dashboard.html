@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surveillance Dashboard</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>CCTV Control</h2>
+        <ul>
+            <li><a href="{{ url_for('dashboard') }}" class="active">Dashboard</a></li>
+            <li><a href="{{ url_for('settings') }}">Settings</a></li>
+            <li><a href="javascript:void(0);" id="logout-btn">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Live Surveillance Feed</h1>
+
+        <!-- Video Mode Selector -->
+        <label for="video-mode">Select Mode:</label>
+        <select id="video-mode">
+            <option value="live">Live Camera</option>
+            <option value="{{ url_for('static', filename='videos/weapon.mp4') }}">Video 1</option>
+            <option value="{{ url_for('static', filename='videos/accident.mp4') }}">Video 2</option>
+        </select> 
+
+        <br><br>
+
+        <!-- Live Camera Button (Visible on Page Load) -->
+        <button id="live-camera-btn" onclick="startLiveCamera()">Start Live Camera</button>
+
+        <br><br>
+
+        <!-- Video Feed -->
+        <div id="video-container">
+            <video controls autoplay id="video-player">
+                <source src="" type="video/mp4"> <!-- Initially empty -->
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+    </div>
+
+    <!-- Alert Section -->
+    <div id="alert-box" class="hidden">
+        <p id="alert-message"></p>
+        <audio id="alert-audio"></audio>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const videoMode = document.getElementById("video-mode");
+            const videoPlayer = document.getElementById("video-player");
+            const liveCameraBtn = document.getElementById("live-camera-btn");
+
+            if (!videoMode || !videoPlayer || !liveCameraBtn) {
+                console.error("One or more elements are missing.");
+                return;
+            }
+
+            // Show "Live Camera" button on page load
+            liveCameraBtn.style.display = "block";
+            videoPlayer.style.display = "none"; // Hide video on load
+
+            videoMode.addEventListener("change", function () {
+                if (this.value === "live") {
+                    liveCameraBtn.style.display = "block"; // Show live button
+                    videoPlayer.style.display = "none"; // Hide video
+                    videoPlayer.src = ""; // Clear video source
+                    videoPlayer.pause();
+                } else {
+                    liveCameraBtn.style.display = "none"; // Hide live button
+                    videoPlayer.style.display = "block"; // Show video
+                    videoPlayer.src = this.value; // Load selected video
+                    videoPlayer.play();
+                }
+            });
+        });
+
+        function startLiveCamera() {
+            fetch('/start-camera')
+                .then(response => response.text())
+                .then(data => {
+                    alert("Crowd Detection Started! OpenCV window should appear.");
+                    console.log(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+
+</body>
+</html>
